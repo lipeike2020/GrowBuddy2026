@@ -1,0 +1,12 @@
+import 'fake-indexeddb/auto';
+import { beforeEach,it,expect } from 'vitest';
+import { db,saveTask,completeTask,day,exportBackup,restoreBackup,validateBackup,beginMaintenance,endMaintenance } from '../src/data';
+import { savePrize,redeemPrize,cancelRedemption,claimRedemption } from '../src/rewards';
+const prize={id:'p',name:'公园野餐',description:'周末一起出发',costStars:3,enabled:true,version:0,createdAt:Date.now(),updatedAt:Date.now()};
+beforeEach(async()=>{for(const table of db.tables)await table.clear();await saveTask({id:'t',name:'阅读',category:'学习',criteria:'读完',date:day(),minutes:5,stars:5,status:'todo',createdAt:Date.now()});await completeTask('t','done');await savePrize(prize,0);});
+it('同一请求并发兑换仅扣一次星星',async()=>{const [a,b]=await Promise.all([redeemPrize('p',1,'r'),redeemPrize('p',1,'r')]);expect(a.id).toBe(b.id);expect(await db.redemptions.count()).toBe(1);expect((await db.ledger.toArray()).reduce((n,l)=>n+l.delta,0)).toBe(2);});
+it('不同并发请求不能透支',async()=>{const results=await Promise.allSettled([redeemPrize('p',1,'a'),redeemPrize('p',1,'b')]);expect(results.filter(r=>r.status==='fulfilled')).toHaveLength(1);expect(await db.redemptions.count()).toBe(1);});
+it('版本改变需要重新确认，历史快照不改变',async()=>{const a=await redeemPrize('p',1,'a');await savePrize({...prize,name:'新礼品',costStars:1},1);await expect(redeemPrize('p',1,'b')).rejects.toThrow('重新确认');expect((await db.redemptions.get(a.id))?.nameSnapshot).toBe('公园野餐');});
+it('重复取消只退一次原价，领取与取消互斥',async()=>{const a=await redeemPrize('p',1,'a');await Promise.all([cancelRedemption(a.id),cancelRedemption(a.id)]);expect((await db.ledger.toArray()).reduce((n,l)=>n+l.delta,0)).toBe(5);await expect(claimRedemption(a.id)).rejects.toThrow('已取消');const b=await redeemPrize('p',1,'b');const results=await Promise.allSettled([claimRedemption(b.id),cancelRedemption(b.id)]);expect(results.filter(r=>r.status==='fulfilled')).toHaveLength(1);});
+it('订单备份可恢复，篡改退款拒绝导入',async()=>{const a=await redeemPrize('p',1,'a');await cancelRedemption(a.id);const backup=await exportBackup();await restoreBackup(backup);expect(await db.redemptions.count()).toBe(1);backup.ledger.find(l=>l.key.startsWith('refund:'))!.delta=2;expect(()=>validateBackup(backup)).toThrow();});
+it('维护期间阻止业务写入，释放后恢复',async()=>{const token=await beginMaintenance('测试');await expect(savePrize({...prize,name:'不应保存'},1)).rejects.toThrow();await endMaintenance(token);await savePrize({...prize,name:'已保存'},1);expect((await db.prizes.get('p'))?.name).toBe('已保存');});

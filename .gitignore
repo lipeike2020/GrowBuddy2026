@@ -1,0 +1,44 @@
+# Generated dependencies and output
+**/node_modules/
+**/dist/
+**/test-results/
+**/playwright-report/
+**/.vite/
+**/__pycache__/
+*.log
+.DS_Store
+Thumbs.db
+
+# Credentials, local state, and personal data
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+.codex/
+.agents/
+app/qa-ui/
+app/design-qa.md
+app/VALIDATION*.md
+
+# Duplicate archives and superseded material
+*.zip
+历史备份/
+参考稿/
+视觉设计/
+视觉设计-V2/检查/
+视觉设计-V2/处理前原图/
+视觉设计-V2/伙伴/圆圆-v1/
+视觉设计-V2/原版57张/页面/
+视觉设计-V2/原版57张/伙伴/
+视觉设计-V2/*记录.json
+视觉设计-V2/*生成*.json
+视觉设计-V2/*.json
+视觉设计-V2/*.html
+视觉设计-V2/*.py
+app/scripts/ui-comparison.mjs
+桃桃少年期-透明背景.png
+打包桃桃素材.py
+
+# Local release packaging
+.release/

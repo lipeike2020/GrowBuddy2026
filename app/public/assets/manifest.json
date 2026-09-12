@@ -1,0 +1,362 @@
+[
+  {
+    "source": "伙伴/01-tuantuan.png",
+    "file": "01-tuantuan.webp",
+    "bytes": 37592
+  },
+  {
+    "source": "伙伴/02-taotao.png",
+    "file": "02-taotao.webp",
+    "bytes": 41478
+  },
+  {
+    "source": "伙伴/03-guoguo.png",
+    "file": "03-guoguo.webp",
+    "bytes": 39252
+  },
+  {
+    "source": "伙伴/04-zhizhi.png",
+    "file": "04-zhizhi.webp",
+    "bytes": 43920
+  },
+  {
+    "source": "伙伴/05-zhuangzhuang.png",
+    "file": "05-zhuangzhuang.webp",
+    "bytes": 31992
+  },
+  {
+    "source": "伙伴/06-tiaotiao.png",
+    "file": "06-tiaotiao.webp",
+    "bytes": 39660
+  },
+  {
+    "source": "伙伴/guoguo-s2.png",
+    "file": "guoguo-s2.webp",
+    "bytes": 37082
+  },
+  {
+    "source": "伙伴/guoguo-s3.png",
+    "file": "guoguo-s3.webp",
+    "bytes": 42180
+  },
+  {
+    "source": "伙伴/taotao-s2.png",
+    "file": "taotao-s2.webp",
+    "bytes": 40150
+  },
+  {
+    "source": "伙伴/taotao-s3.png",
+    "file": "taotao-s3.webp",
+    "bytes": 41180
+  },
+  {
+    "source": "伙伴/tiaotiao-s2.png",
+    "file": "tiaotiao-s2.webp",
+    "bytes": 35476
+  },
+  {
+    "source": "伙伴/tiaotiao-s3.png",
+    "file": "tiaotiao-s3.webp",
+    "bytes": 34552
+  },
+  {
+    "source": "伙伴/tuantuan-s2.png",
+    "file": "tuantuan-s2.webp",
+    "bytes": 38482
+  },
+  {
+    "source": "伙伴/tuantuan-s3.png",
+    "file": "tuantuan-s3.webp",
+    "bytes": 34914
+  },
+  {
+    "source": "伙伴/zhizhi-s2.png",
+    "file": "zhizhi-s2.webp",
+    "bytes": 46916
+  },
+  {
+    "source": "伙伴/zhizhi-s3.png",
+    "file": "zhizhi-s3.webp",
+    "bytes": 52602
+  },
+  {
+    "source": "伙伴/zhuangzhuang-s2.png",
+    "file": "zhuangzhuang-s2.webp",
+    "bytes": 31944
+  },
+  {
+    "source": "伙伴/zhuangzhuang-s3.png",
+    "file": "zhuangzhuang-s3.webp",
+    "bytes": 34470
+  },
+  {
+    "source": "通用/app-icon.png",
+    "file": "app-icon.webp",
+    "bytes": 8952
+  },
+  {
+    "source": "通用/empty-records.png",
+    "file": "empty-records.webp",
+    "bytes": 9818
+  },
+  {
+    "source": "通用/gift-default.png",
+    "file": "gift-default.webp",
+    "bytes": 12158
+  },
+  {
+    "source": "通用/mood-calm.png",
+    "file": "mood-calm.webp",
+    "bytes": 11276
+  },
+  {
+    "source": "通用/mood-happy.png",
+    "file": "mood-happy.webp",
+    "bytes": 10114
+  },
+  {
+    "source": "通用/mood-sad.png",
+    "file": "mood-sad.webp",
+    "bytes": 10212
+  },
+  {
+    "source": "通用/mood-tired.png",
+    "file": "mood-tired.webp",
+    "bytes": 10664
+  },
+  {
+    "source": "通用/saved-success.png",
+    "file": "saved-success.webp",
+    "bytes": 14738
+  },
+  {
+    "source": "成长之星/star-guoguo.png",
+    "file": "star-guoguo.webp",
+    "bytes": 16962
+  },
+  {
+    "source": "成长之星/star-taotao.png",
+    "file": "star-taotao.webp",
+    "bytes": 16058
+  },
+  {
+    "source": "成长之星/star-tiaotiao.png",
+    "file": "star-tiaotiao.webp",
+    "bytes": 16022
+  },
+  {
+    "source": "成长之星/star-tuantuan.png",
+    "file": "star-tuantuan.webp",
+    "bytes": 15152
+  },
+  {
+    "source": "成长之星/star-zhizhi.png",
+    "file": "star-zhizhi.webp",
+    "bytes": 16774
+  },
+  {
+    "source": "成长之星/star-zhuangzhuang.png",
+    "file": "star-zhuangzhuang.webp",
+    "bytes": 15638
+  },
+  {
+    "source": "原版57张/成就/A01.png",
+    "file": "A01.webp",
+    "bytes": 18064
+  },
+  {
+    "source": "原版57张/成就/A02.png",
+    "file": "A02.webp",
+    "bytes": 18828
+  },
+  {
+    "source": "原版57张/成就/A03.png",
+    "file": "A03.webp",
+    "bytes": 14830
+  },
+  {
+    "source": "原版57张/成就/A04.png",
+    "file": "A04.webp",
+    "bytes": 15394
+  },
+  {
+    "source": "原版57张/成就/A05.png",
+    "file": "A05.webp",
+    "bytes": 18566
+  },
+  {
+    "source": "原版57张/成就/A06.png",
+    "file": "A06.webp",
+    "bytes": 18176
+  },
+  {
+    "source": "原版57张/成就/A07.png",
+    "file": "A07.webp",
+    "bytes": 19288
+  },
+  {
+    "source": "原版57张/成就/A08.png",
+    "file": "A08.webp",
+    "bytes": 17326
+  },
+  {
+    "source": "原版57张/成就/A09.png",
+    "file": "A09.webp",
+    "bytes": 18256
+  },
+  {
+    "source": "原版57张/成就/A10.png",
+    "file": "A10.webp",
+    "bytes": 14914
+  },
+  {
+    "source": "原版57张/成就/A11.png",
+    "file": "A11.webp",
+    "bytes": 23522
+  },
+  {
+    "source": "原版57张/成就/A12.png",
+    "file": "A12.webp",
+    "bytes": 14980
+  },
+  {
+    "source": "原版57张/成就/A13.png",
+    "file": "A13.webp",
+    "bytes": 21572
+  },
+  {
+    "source": "原版57张/成就/A14.png",
+    "file": "A14.webp",
+    "bytes": 18866
+  },
+  {
+    "source": "原版57张/成就/A15.png",
+    "file": "A15.webp",
+    "bytes": 17886
+  },
+  {
+    "source": "原版57张/成就/A16.png",
+    "file": "A16.webp",
+    "bytes": 17442
+  },
+  {
+    "source": "原版57张/成就/A17.png",
+    "file": "A17.webp",
+    "bytes": 14716
+  },
+  {
+    "source": "原版57张/成就/A18.png",
+    "file": "A18.webp",
+    "bytes": 15938
+  },
+  {
+    "source": "原版57张/成就/A19.png",
+    "file": "A19.webp",
+    "bytes": 19256
+  },
+  {
+    "source": "原版57张/成就/A20.png",
+    "file": "A20.webp",
+    "bytes": 16542
+  },
+  {
+    "source": "原版57张/勋章/M01.png",
+    "file": "M01.webp",
+    "bytes": 13644
+  },
+  {
+    "source": "原版57张/勋章/M02.png",
+    "file": "M02.webp",
+    "bytes": 15730
+  },
+  {
+    "source": "原版57张/勋章/M03.png",
+    "file": "M03.webp",
+    "bytes": 13740
+  },
+  {
+    "source": "原版57张/勋章/M04.png",
+    "file": "M04.webp",
+    "bytes": 16114
+  },
+  {
+    "source": "原版57张/勋章/M05.png",
+    "file": "M05.webp",
+    "bytes": 14546
+  },
+  {
+    "source": "原版57张/勋章/M06.png",
+    "file": "M06.webp",
+    "bytes": 15506
+  },
+  {
+    "source": "原版57张/勋章/M07.png",
+    "file": "M07.webp",
+    "bytes": 14960
+  },
+  {
+    "source": "原版57张/勋章/M08.png",
+    "file": "M08.webp",
+    "bytes": 16356
+  },
+  {
+    "source": "原版57张/勋章/M09.png",
+    "file": "M09.webp",
+    "bytes": 14962
+  },
+  {
+    "source": "原版57张/勋章/M10.png",
+    "file": "M10.webp",
+    "bytes": 13440
+  },
+  {
+    "source": "原版57张/勋章/M11.png",
+    "file": "M11.webp",
+    "bytes": 15768
+  },
+  {
+    "source": "原版57张/勋章/M12.png",
+    "file": "M12.webp",
+    "bytes": 15032
+  },
+  {
+    "source": "原版57张/勋章/M13.png",
+    "file": "M13.webp",
+    "bytes": 13680
+  },
+  {
+    "source": "原版57张/勋章/M14.png",
+    "file": "M14.webp",
+    "bytes": 13952
+  },
+  {
+    "source": "原版57张/勋章/M15.png",
+    "file": "M15.webp",
+    "bytes": 14400
+  },
+  {
+    "source": "原版57张/勋章/M16.png",
+    "file": "M16.webp",
+    "bytes": 14504
+  },
+  {
+    "source": "原版57张/勋章/M17.png",
+    "file": "M17.webp",
+    "bytes": 15144
+  },
+  {
+    "source": "原版57张/勋章/M18.png",
+    "file": "M18.webp",
+    "bytes": 14882
+  },
+  {
+    "source": "原版57张/勋章/M19.png",
+    "file": "M19.webp",
+    "bytes": 14526
+  },
+  {
+    "source": "原版57张/勋章/M20.png",
+    "file": "M20.webp",
+    "bytes": 16102
+  }
+]

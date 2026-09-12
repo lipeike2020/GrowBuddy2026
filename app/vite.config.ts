@@ -1,0 +1,4 @@
+import { defineConfig } from 'vite';
+import vue from '@vitejs/plugin-vue';
+import { VitePWA } from 'vite-plugin-pwa';
+export default defineConfig({plugins:[vue({template:{transformAssetUrls:{tags:{}}}}),VitePWA({registerType:'prompt',injectRegister:false,manifest:{name:'成长森林 GrowBuddy',short_name:'成长森林',description:'每天进步一点点',lang:'zh-CN',start_url:'./',scope:'./',display:'standalone',theme_color:'#52785b',background_color:'#f7f8f2',icons:[{src:'pwa-192.png',sizes:'192x192',type:'image/png'},{src:'pwa-512.png',sizes:'512x512',type:'image/png'},{src:'pwa-maskable.png',sizes:'512x512',type:'image/png',purpose:'maskable'}]},workbox:{globPatterns:['**/*.{js,css,html,webp,svg,png,json,webmanifest}'],importScripts:['sw-support.js'],clientsClaim:true,skipWaiting:false,cleanupOutdatedCaches:true,navigateFallback:'index.html'}})],base:'./'});

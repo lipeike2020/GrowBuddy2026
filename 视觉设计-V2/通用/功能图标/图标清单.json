@@ -1,0 +1,254 @@
+[
+  {
+    "id": "House",
+    "name": "今日行动",
+    "file": "通用/功能图标/House.svg",
+    "source": "Lucide 1.8.0",
+    "license": "ISC"
+  },
+  {
+    "id": "Compass",
+    "name": "探索发现",
+    "file": "通用/功能图标/Compass.svg",
+    "source": "Lucide 1.8.0",
+    "license": "ISC"
+  },
+  {
+    "id": "ChartColumn",
+    "name": "我的成长",
+    "file": "通用/功能图标/ChartColumn.svg",
+    "source": "Lucide 1.8.0",
+    "license": "ISC"
+  },
+  {
+    "id": "Repeat",
+    "name": "习惯",
+    "file": "通用/功能图标/Repeat.svg",
+    "source": "Lucide 1.8.0",
+    "license": "ISC"
+  },
+  {
+    "id": "Palette",
+    "name": "兴趣",
+    "file": "通用/功能图标/Palette.svg",
+    "source": "Lucide 1.8.0",
+    "license": "ISC"
+  },
+  {
+    "id": "BookOpen",
+    "name": "学习",
+    "file": "通用/功能图标/BookOpen.svg",
+    "source": "Lucide 1.8.0",
+    "license": "ISC"
+  },
+  {
+    "id": "Sprout",
+    "name": "成长",
+    "file": "通用/功能图标/Sprout.svg",
+    "source": "Lucide 1.8.0",
+    "license": "ISC"
+  },
+  {
+    "id": "ListChecks",
+    "name": "选择任务",
+    "file": "通用/功能图标/ListChecks.svg",
+    "source": "Lucide 1.8.0",
+    "license": "ISC"
+  },
+  {
+    "id": "ArrowUpDown",
+    "name": "调整顺序",
+    "file": "通用/功能图标/ArrowUpDown.svg",
+    "source": "Lucide 1.8.0",
+    "license": "ISC"
+  },
+  {
+    "id": "ArrowUp",
+    "name": "上移",
+    "file": "通用/功能图标/ArrowUp.svg",
+    "source": "Lucide 1.8.0",
+    "license": "ISC"
+  },
+  {
+    "id": "ArrowDown",
+    "name": "下移",
+    "file": "通用/功能图标/ArrowDown.svg",
+    "source": "Lucide 1.8.0",
+    "license": "ISC"
+  },
+  {
+    "id": "Timer",
+    "name": "专注计时",
+    "file": "通用/功能图标/Timer.svg",
+    "source": "Lucide 1.8.0",
+    "license": "ISC"
+  },
+  {
+    "id": "Play",
+    "name": "开始",
+    "file": "通用/功能图标/Play.svg",
+    "source": "Lucide 1.8.0",
+    "license": "ISC"
+  },
+  {
+    "id": "Pause",
+    "name": "暂停",
+    "file": "通用/功能图标/Pause.svg",
+    "source": "Lucide 1.8.0",
+    "license": "ISC"
+  },
+  {
+    "id": "Square",
+    "name": "结束",
+    "file": "通用/功能图标/Square.svg",
+    "source": "Lucide 1.8.0",
+    "license": "ISC"
+  },
+  {
+    "id": "Check",
+    "name": "完成",
+    "file": "通用/功能图标/Check.svg",
+    "source": "Lucide 1.8.0",
+    "license": "ISC"
+  },
+  {
+    "id": "ChevronLeft",
+    "name": "返回",
+    "file": "通用/功能图标/ChevronLeft.svg",
+    "source": "Lucide 1.8.0",
+    "license": "ISC"
+  },
+  {
+    "id": "ChevronRight",
+    "name": "详情",
+    "file": "通用/功能图标/ChevronRight.svg",
+    "source": "Lucide 1.8.0",
+    "license": "ISC"
+  },
+  {
+    "id": "Plus",
+    "name": "创建",
+    "file": "通用/功能图标/Plus.svg",
+    "source": "Lucide 1.8.0",
+    "license": "ISC"
+  },
+  {
+    "id": "Pencil",
+    "name": "编辑",
+    "file": "通用/功能图标/Pencil.svg",
+    "source": "Lucide 1.8.0",
+    "license": "ISC"
+  },
+  {
+    "id": "CalendarDays",
+    "name": "日期",
+    "file": "通用/功能图标/CalendarDays.svg",
+    "source": "Lucide 1.8.0",
+    "license": "ISC"
+  },
+  {
+    "id": "Star",
+    "name": "星星",
+    "file": "通用/功能图标/Star.svg",
+    "source": "Lucide 1.8.0",
+    "license": "ISC"
+  },
+  {
+    "id": "Gift",
+    "name": "我的奖励",
+    "file": "通用/功能图标/Gift.svg",
+    "source": "Lucide 1.8.0",
+    "license": "ISC"
+  },
+  {
+    "id": "Settings",
+    "name": "设置",
+    "file": "通用/功能图标/Settings.svg",
+    "source": "Lucide 1.8.0",
+    "license": "ISC"
+  },
+  {
+    "id": "Download",
+    "name": "导出",
+    "file": "通用/功能图标/Download.svg",
+    "source": "Lucide 1.8.0",
+    "license": "ISC"
+  },
+  {
+    "id": "Upload",
+    "name": "导入",
+    "file": "通用/功能图标/Upload.svg",
+    "source": "Lucide 1.8.0",
+    "license": "ISC"
+  },
+  {
+    "id": "Trash2",
+    "name": "已删除项",
+    "file": "通用/功能图标/Trash2.svg",
+    "source": "Lucide 1.8.0",
+    "license": "ISC"
+  },
+  {
+    "id": "RotateCcw",
+    "name": "取消退回",
+    "file": "通用/功能图标/RotateCcw.svg",
+    "source": "Lucide 1.8.0",
+    "license": "ISC"
+  },
+  {
+    "id": "CircleCheck",
+    "name": "已领取",
+    "file": "通用/功能图标/CircleCheck.svg",
+    "source": "Lucide 1.8.0",
+    "license": "ISC"
+  },
+  {
+    "id": "Clock",
+    "name": "待领取",
+    "file": "通用/功能图标/Clock.svg",
+    "source": "Lucide 1.8.0",
+    "license": "ISC"
+  },
+  {
+    "id": "Search",
+    "name": "搜索",
+    "file": "通用/功能图标/Search.svg",
+    "source": "Lucide 1.8.0",
+    "license": "ISC"
+  },
+  {
+    "id": "X",
+    "name": "关闭",
+    "file": "通用/功能图标/X.svg",
+    "source": "Lucide 1.8.0",
+    "license": "ISC"
+  },
+  {
+    "id": "Volume2",
+    "name": "声音",
+    "file": "通用/功能图标/Volume2.svg",
+    "source": "Lucide 1.8.0",
+    "license": "ISC"
+  },
+  {
+    "id": "ImagePlus",
+    "name": "选择图片",
+    "file": "通用/功能图标/ImagePlus.svg",
+    "source": "Lucide 1.8.0",
+    "license": "ISC"
+  },
+  {
+    "id": "CircleAlert",
+    "name": "提示",
+    "file": "通用/功能图标/CircleAlert.svg",
+    "source": "Lucide 1.8.0",
+    "license": "ISC"
+  },
+  {
+    "id": "Save",
+    "name": "保存",
+    "file": "通用/功能图标/Save.svg",
+    "source": "Lucide 1.8.0",
+    "license": "ISC"
+  }
+]
