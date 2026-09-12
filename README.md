@@ -34,6 +34,12 @@ npm exec vite -- preview --host 127.0.0.1 --port 4173
 
 PWA 离线功能只在正式构建中启用。第一次联网打开并完成资源缓存后可离线使用；线上部署需要 HTTPS。不同域名、浏览器或端口各自保存独立档案。
 
+## GitHub Pages 部署
+
+仓库 Settings → Pages → Source 使用 **GitHub Actions**。工作流 `.github/workflows/pages.yml` 在推送 `main` 的应用变更时，进入 `app` 执行 `npm ci`、`npm test` 和构建，再发布 `app/dist`；也可以在 Actions 页面手动运行。
+
+构建基础路径为仓库名对应的子目录，保留 Hash 路由及 PWA 缓存支持。部署成功后的地址为 `https://lipeike2020.github.io/GrowBuddy2026/`。网站档案与本地预览的档案独立；需要迁移时使用导出/导入备份。
+
 ## 目录
 
 - `app/`：Vue 3 + TypeScript 应用、测试及运行素材。
