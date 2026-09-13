@@ -38,7 +38,7 @@ PWA 离线功能只在正式构建中启用。第一次联网打开并完成资�
 
 仓库 Settings → Pages → Source 使用 **GitHub Actions**。工作流 `.github/workflows/pages.yml` 在推送 `main` 的应用变更时，进入 `app` 执行 `npm ci`、`npm test` 和构建，再发布 `app/dist`；也可以在 Actions 页面手动运行。
 
-构建基础路径为仓库名对应的子目录，保留 Hash 路由及 PWA 缓存支持。部署成功后的地址为 `https://lipeike2020.github.io/GrowBuddy2026/`。网站档案与本地预览的档案独立；需要迁移时使用导出/导入备份。
+构建使用相对资源路径，同时支持仓库子目录及自定义域名，保留 Hash 路由与 PWA 缓存支持。当前 Pages 自定义域名为 `https://www.growbuddy.fun/`；原始入口为 `https://lipeike2020.github.io/GrowBuddy2026/`。网站档案与本地预览的档案独立；需要迁移时使用导出/导入备份。
 
 ## 目录
 

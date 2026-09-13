@@ -35,10 +35,8 @@ jobs:
         run: npm ci
       - name: Run tests
         run: npm test
-      - name: Build for project Pages URL
-        env:
-          PAGES_REPOSITORY: ${{ github.event.repository.name }}
-        run: npm run build -- --base="/$PAGES_REPOSITORY/"
+      - name: Build with portable asset paths
+        run: npm run build
       - name: Upload site artifact
         uses: actions/upload-pages-artifact@v3
         with:
