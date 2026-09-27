@@ -12,6 +12,7 @@ await mkdir(path.join(out,'icons'),{recursive:true});
 for(const file of await readdir(path.join(root,'通用/功能图标')))await copyFile(path.join(root,'通用/功能图标',file),path.join(out,'icons',file));
 await writeFile('public/assets/manifest.json',JSON.stringify(report,null,2));
 console.log(`${report.length} images, ${Math.round(report.reduce((n,r)=>n+r.bytes,0)/1024)} KB`);
+await import('./theme-icons.mjs');
 await sharp(path.join(root,'原版57张/装饰/D07.png')).resize({width:1440,withoutEnlargement:true}).webp({quality:83}).toFile(path.join(out,'forest-day.webp'));
 for(const size of [192,512])await sharp(path.join(out,'app-icon.webp')).resize(size,size).png().toFile(`public/pwa-${size}.png`);
 await sharp(path.join(out,'app-icon.webp')).resize(320,320).extend({top:96,bottom:96,left:96,right:96,background:'#f7f8f2'}).png().toFile('public/pwa-maskable.png');
