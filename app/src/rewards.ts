@@ -1,11 +1,14 @@
+import { requireParent } from './parent-session';
 import { db,uid,day,type Ledger } from './data';
 import { prizeSchema,validateImage,type Prize,type RewardImage,type Redemption } from './reward-model';
 
 export class PrizeChangedError extends Error {constructor(){super('礼品已经修改，请按最新内容重新确认');}}
 export async function savePrize(input:Prize,expectedVersion:number,image?:RewardImage){
+ requireParent();
  const prize=prizeSchema.parse({...input,version:expectedVersion+1,updatedAt:Date.now()});
  if(image){validateImage(image);prize.imageId=image.id;}
  await db.transaction('rw',db.prizes,db.rewardImages,async()=>{
+  requireParent();
   const old=await db.prizes.get(prize.id);if((old?.version??0)!==expectedVersion)throw new PrizeChangedError();
   if(image)await db.rewardImages.add(image);
   if(prize.imageId&&!await db.rewardImages.get(prize.imageId))throw Error('礼品图片未保存，请重新选择');
@@ -20,12 +23,24 @@ export async function redeemPrize(prizeId:string,expectedVersion:number,requestI
   const prize=await db.prizes.get(prizeId);if(!prize||!prize.enabled)throw Error('这个礼品已停用，请选择其他礼品');
   if(prize.version!==expectedVersion)throw new PrizeChangedError();
   const balance=(await db.ledger.toArray()).reduce((n,l)=>n+l.delta,0);if(balance<prize.costStars)throw Error(`还差 ${prize.costStars-balance} 颗星星，慢慢积累就好`);
-  const at=Date.now(),order:Redemption={id:uid(),requestId,prizeId,prizeVersion:prize.version,nameSnapshot:prize.name,descriptionSnapshot:prize.description,imageIdSnapshot:prize.imageId,costSnapshot:prize.costStars,status:'pending',redeemedAt:at};
+  const at=Date.now(),order:Redemption={id:uid(),requestId,prizeId,prizeVersion:prize.version,nameSnapshot:prize.name,descriptionSnapshot:prize.description,imageIdSnapshot:prize.imageId,costSnapshot:prize.costStars,status:'requested',redeemedAt:at};
   await db.redemptions.add(order);await db.ledger.add({key:'redeem:'+order.id,redemptionId:order.id,delta:-order.costSnapshot,at});return order;
  });
 }
-export async function claimRedemption(id:string){await db.transaction('rw',db.redemptions,async()=>{const order=await db.redemptions.get(id);if(!order)throw Error('找不到兑换记录');if(order.status==='claimed')return;if(order.status!=='pending')throw Error('这笔兑换已取消，不能记录领取');await db.redemptions.update(id,{status:'claimed',claimedAt:Date.now()});});}
-export async function cancelRedemption(id:string){await db.transaction('rw',db.redemptions,db.ledger,async()=>{const order=await db.redemptions.get(id);if(!order)throw Error('找不到兑换记录');if(order.status==='cancelled')return;if(order.status!=='pending')throw Error('这笔兑换已领取，不能再取消');const at=Date.now();await db.ledger.add({key:'refund:'+id,redemptionId:id,delta:order.costSnapshot,at});await db.redemptions.update(id,{status:'cancelled',cancelledAt:at});});}
+export async function approveRedemption(id:string,fulfillmentNote:string){
+ requireParent();
+ if(!fulfillmentNote.trim()||fulfillmentNote.length>100)throw Error('请填写100字以内的兑现时间或约定');
+ await db.transaction('rw',db.redemptions,async()=>{
+  requireParent();
+  const order=await db.redemptions.get(id);
+  if(!order)throw Error('找不到兑换申请');
+  if(order.status==='pending')return;
+  if(order.status!=='requested')throw Error('这笔申请已经结束');
+  await db.redemptions.update(id,{status:'pending',approvedAt:Date.now(),fulfillmentNote:fulfillmentNote.trim()});
+ });
+}
+export async function claimRedemption(id:string){requireParent();await db.transaction('rw',db.redemptions,async()=>{const order=await db.redemptions.get(id);if(!order)throw Error('找不到兑换记录');if(order.status==='claimed')return;if(order.status!=='pending')throw Error(order.status==='cancelled'?'这笔兑换已取消，不能记录领取':'请先由家长确认兑换申请');await db.redemptions.update(id,{status:'claimed',claimedAt:Date.now()});});}
+export async function cancelRedemption(id:string,reason='孩子取消申请'){await db.transaction('rw',db.redemptions,db.ledger,async()=>{const order=await db.redemptions.get(id);if(!order)throw Error('找不到兑换记录');if(order.status==='cancelled')return;if(order.status==='claimed')throw Error('这笔兑换已领取，不能再取消');if(order.status==='pending')requireParent();if(!reason.trim()||reason.length>200)throw Error('请填写200字以内的取消原因');const at=Date.now();await db.ledger.add({key:'refund:'+id,redemptionId:id,delta:order.costSnapshot,at});await db.redemptions.update(id,{status:'cancelled',cancelledAt:at,cancelReason:reason.trim()});});}
 
 export function rewardReport(ledger:Ledger[],orders:Redemption[],from:string,to:string){const within=(at:number)=>{const date=day(at);return date>=from&&date<=to;};const period=ledger.filter(l=>within(l.at));const earned=period.filter(l=>l.taskId).reduce((n,l)=>n+l.delta,0),spent=-period.filter(l=>l.key.startsWith('redeem:')).reduce((n,l)=>n+l.delta,0),refunded=period.filter(l=>l.key.startsWith('refund:')).reduce((n,l)=>n+l.delta,0);return {balance:ledger.reduce((n,l)=>n+l.delta,0),earned,spent,refunded,net:spent-refunded,claimed:orders.filter(o=>o.claimedAt!==undefined&&within(o.claimedAt)).length};}
 

@@ -1,7 +1,7 @@
 import Dexie, { type DBCoreTransaction } from 'dexie';
 
 export interface RuntimeControl { id:'main'; schemaVersion:number; epoch:number; maintenance?:{token:string;reason:string;until:number} }
-export const DATA_VERSION=3;
+export const DATA_VERSION=4;
 
 /** Serializes writes with maintenance changes inside the same IndexedDB transaction. */
 export function installWriteGuard(database:Dexie,state:{epoch:number},authorized:WeakSet<DBCoreTransaction>){

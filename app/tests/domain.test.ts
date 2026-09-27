@@ -1,8 +1,9 @@
 import 'fake-indexeddb/auto';
+import { unlockParentSession } from '../src/parent-session';
 import { beforeEach, afterAll, describe, it, expect } from 'vitest';
 import { db, saveTask, completeTask, saveOrder, moveToday, exportBackup, restoreBackup, validateBackup, day, type Task } from '../src/data';
 const task=(id='t1',stars=3):Task=>({id,name:'阅读故事',category:'学习',criteria:'读完并分享一个情节',date:day(),minutes:15,stars,status:'todo',createdAt:Date.now()});
-beforeEach(async()=>{for(const table of db.tables)await table.clear();});
+beforeEach(async()=>{unlockParentSession();for(const table of db.tables)await table.clear();});
 afterAll(()=>db.close());
 describe('任务奖励与数据完整性',()=>{
  it('重复、并发完成只发一次奖励',async()=>{await saveTask(task());await Promise.all([completeTask('t1','done'),completeTask('t1','done')]);expect(await db.ledger.count()).toBe(1);expect((await db.ledger.toArray())[0].delta).toBe(3);});

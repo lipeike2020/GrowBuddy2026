@@ -1,3 +1,4 @@
+import { requireParent, lockParent } from './parent-session';
 import Dexie, { type Table } from 'dexie';
 import { z } from 'zod';
 import { dateSchema, goalSchema, planSchema, awardSchema, journeySchema, bindingSchema, settlementSchema, type Goal, type Plan, type Award, type Journey, type Binding, type Settlement } from './progression-model';
@@ -7,9 +8,9 @@ export const categories=['习惯','兴趣','学习','成长'] as const;
 export const companions=[['tuantuan','团团','红熊猫'],['taotao','桃桃','粉色小狐狸'],['guoguo','果果','花栗鼠'],['zhizhi','智智','猫头鹰'],['zhuangzhuang','壮壮','棕熊'],['tiaotiao','跳跳','垂耳兔']];
 export const companionImage=(id:string,stage=1)=>stage>1?`./assets/${id}-s${stage}.webp`:`./assets/0${companions.findIndex(c=>c[0]===id)+1}-${id}.webp`;
 export const day=(at=Date.now())=>new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Shanghai',year:'numeric',month:'2-digit',day:'2-digit'}).format(at);
-export const taskSchema=z.object({id:z.string(),name:z.string().trim().min(1).max(40),category:z.enum(categories),date:dateSchema,criteria:z.string().trim().min(1).max(200),minutes:z.number().int().min(1).max(60),stars:z.number().int().min(0).max(99),locked:z.number().int().min(0).max(99).optional(),status:z.enum(['todo','started','done','partial','paused','ended']),createdAt:z.number(),resultAt:z.number().optional(),note:z.string().max(500).optional(),mood:z.string().optional(),planId:z.string().optional(),occurrenceDate:dateSchema.optional(),planVersion:z.number().int().optional(),rewardOverride:z.boolean().optional(),pauseSource:z.enum(['plan','user']).optional(),scheduleExcluded:z.boolean().optional()});
+export const taskSchema=z.object({id:z.string(),name:z.string().trim().min(1).max(40),category:z.enum(categories),date:dateSchema,criteria:z.string().trim().min(1).max(200),minutes:z.number().int().min(1).max(60),stars:z.number().int().min(0).max(99),locked:z.number().int().min(0).max(99).optional(),status:z.enum(['todo','started','done','partial','paused','ended']),createdAt:z.number(),resultAt:z.number().optional(),note:z.string().max(500).optional(),mood:z.string().optional(),planId:z.string().optional(),occurrenceDate:dateSchema.optional(),planVersion:z.number().int().optional(),rewardOverride:z.boolean().optional(),pauseSource:z.enum(['plan','user']).optional(),scheduleExcluded:z.boolean().optional(),support:z.enum(['unrecorded','independent','reminded','together','excluded']).optional(),supportUpdatedAt:z.number().int().nonnegative().optional()});
 export type Task=z.infer<typeof taskSchema>;
-const profileSchema=z.object({id:z.literal('student'),nickname:z.string().trim().min(1).max(20),grade:z.enum(['一年级','二年级','三年级']),companion:z.enum(['tuantuan','taotao','guoguo','zhizhi','zhuangzhuang','tiaotiao']),reduceMotion:z.boolean()});
+const profileSchema=z.object({id:z.literal('student'),nickname:z.string().trim().min(1).max(20),grade:z.enum(['一年级','二年级','三年级']),companion:z.enum(['tuantuan','taotao','guoguo','zhizhi','zhuangzhuang','tiaotiao']),reduceMotion:z.boolean(),parentPin:z.object({salt:z.string().regex(/^[a-f0-9]{32}$/),hash:z.string().regex(/^[a-f0-9]{64}$/)}).optional(),parentFailures:z.number().int().min(0).max(4).optional(),parentRetryAt:z.number().int().nonnegative().optional()});
 export type Profile=z.infer<typeof profileSchema>;
 const sessionSchema=z.object({id:z.string(),taskId:z.string(),status:z.enum(['running','paused','ended']),mode:z.enum(['countdown','up']),targetMs:z.number().nonnegative(),effectiveMs:z.number().nonnegative(),owner:z.string(),generation:z.number().int(),updatedAt:z.number(),endedAt:z.number().optional(),reason:z.string()});
 export type Session=z.infer<typeof sessionSchema>;
@@ -31,13 +32,14 @@ export class ForestDB extends Dexie {
   super(name);this.version(1).stores({profiles:'id',tasks:'id,date,status',sessions:'id,status,taskId',segments:'id,sessionId,date',ledger:'key,taskId',orders:'date'});
   this.version(2).stores({tasks:'id,date,status,planId,&[planId+occurrenceDate]',goals:'id,status',plans:'id,goalId,status',awards:'id,&[sourceType+sourceId]',journeys:'id,companionId',bindings:'date',settlements:'date'});
   this.version(3).stores({prizes:'id',redemptions:'id,&requestId,prizeId,status,redeemedAt',rewardImages:'id',runtimeControl:'id',ledger:'key,taskId,redemptionId'});
+  this.version(4).stores({}).upgrade(async tx=>{await tx.table('runtimeControl').update('main',{schemaVersion:4});});
   installWriteGuard(this,this.runtimeState,this.authorized);
   this.on('ready',async()=>{await this.transaction('rw',this.runtimeControl,async()=>{let control=await this.runtimeControl.get('main');if(!control){control={id:'main',schemaVersion:DATA_VERSION,epoch:this.runtimeState.epoch};await this.runtimeControl.put(control);}this.runtimeState.epoch=control.epoch;});});
  }
 }
 export const db=new ForestDB();
 export const uid=()=>crypto.randomUUID();
-export async function saveTask(input:Task){const task=taskSchema.parse(input);await db.transaction('rw',db.tasks,async()=>{const old=await db.tasks.get(task.id);if(old&&['done','partial','ended'].includes(old.status))throw Error('这项任务已经记录结果。');if(old){task.status=old.status;task.planId=old.planId;task.occurrenceDate=old.occurrenceDate;task.pauseSource=old.pauseSource;}if(old?.locked!==undefined)task.locked=old.locked;if(old?.planId&&old.stars!==task.stars)task.rewardOverride=true;await db.tasks.put(task);});}
+export async function saveTask(input:Task){requireParent();const task=taskSchema.parse(input);await db.transaction('rw',db.tasks,async()=>{const old=await db.tasks.get(task.id);if(old&&['done','partial','ended'].includes(old.status))throw Error('这项任务已经记录结果。');if(old){task.status=old.status;task.planId=old.planId;task.occurrenceDate=old.occurrenceDate;task.pauseSource=old.pauseSource;}if(old?.locked!==undefined)task.locked=old.locked;if(old?.planId&&old.stars!==task.stars)task.rewardOverride=true;await db.tasks.put(task);});}
 export async function completeTask(id:string,result:'done'|'partial',note='',mood=''){
  await db.transaction('rw',[db.tasks,db.ledger,db.sessions,db.profiles,db.journeys,db.bindings],async()=>{const task=await db.tasks.get(id);if(!task)throw Error('找不到这项任务');if(['done','partial'].includes(task.status))return;if(!['todo','started'].includes(task.status))throw Error('请先恢复这项安排，再记录结果');
  const active=await db.sessions.where('taskId').equals(id).filter(s=>s.status!=='ended').toArray();if(active.some(s=>s.status==='running'))throw Error('请先暂停专注，再保存结果。');
@@ -56,16 +58,18 @@ export async function completeTask(id:string,result:'done'|'partial',note='',moo
  }
  });
 }
-export async function saveOrder(ids:string[],revision:number){await db.transaction('rw',db.orders,db.tasks,async()=>{const old=await db.orders.get(day());if((old?.revision??0)!==revision)throw Error('顺序已在另一页修改，请重新调整。');const actual=await db.tasks.where('date').equals(day()).filter(t=>['todo','started'].includes(t.status)).primaryKeys();if(ids.length!==actual.length||new Set(ids).size!==ids.length||actual.some(id=>!ids.includes(id)))throw Error('任务清单已变化，请重新调整。');await db.orders.put({date:day(),ids,revision:revision+1});});}
-export async function moveToday(id:string){await db.transaction('rw',db.tasks,db.sessions,db.plans,db.goals,async()=>{const t=await db.tasks.get(id);if(!t||!['todo','started','paused'].includes(t.status))throw Error('任务已结束');if(t.planId&&t.status==='paused'){const p=await db.plans.get(t.planId),g=p?await db.goals.get(p.goalId):undefined;if(p?.status!=='active'||g?.status!=='active')throw Error('请先恢复所属目标与计划');}if(await db.sessions.where('taskId').equals(id).filter(s=>s.status==='running').count())throw Error('请先暂停该任务的专注');await db.tasks.update(id,{date:day(),status:t.locked===undefined?'todo':'started',pauseSource:undefined});});}
+export async function saveOrder(ids:string[],revision:number){requireParent();await db.transaction('rw',db.orders,db.tasks,async()=>{const old=await db.orders.get(day());if((old?.revision??0)!==revision)throw Error('顺序已在另一页修改，请重新调整。');const actual=await db.tasks.where('date').equals(day()).filter(t=>['todo','started'].includes(t.status)).primaryKeys();if(ids.length!==actual.length||new Set(ids).size!==ids.length||actual.some(id=>!ids.includes(id)))throw Error('任务清单已变化，请重新调整。');await db.orders.put({date:day(),ids,revision:revision+1});});}
+export async function moveToday(id:string){requireParent();await db.transaction('rw',db.tasks,db.sessions,db.plans,db.goals,async()=>{const t=await db.tasks.get(id);if(!t||!['todo','started','paused'].includes(t.status))throw Error('任务已结束');if(t.planId&&t.status==='paused'){const p=await db.plans.get(t.planId),g=p?await db.goals.get(p.goalId):undefined;if(p?.status!=='active'||g?.status!=='active')throw Error('请先恢复所属目标与计划');}if(await db.sessions.where('taskId').equals(id).filter(s=>s.status==='running').count())throw Error('请先暂停该任务的专注');await db.tasks.update(id,{date:day(),status:t.locked===undefined?'todo':'started',pauseSource:undefined});});}
 const progressionBackup={goals:z.array(goalSchema),plans:z.array(planSchema),awards:z.array(awardSchema),journeys:z.array(journeySchema),bindings:z.array(bindingSchema),settlements:z.array(settlementSchema)};
 const legacyBackupSchema=z.object({schemaVersion:z.literal(1),appVersion:z.string(),exportedAt:z.number(),profiles:z.array(profileSchema).max(1),tasks:z.array(taskSchema),sessions:z.array(sessionSchema),segments:z.array(segmentSchema),ledger:z.array(legacyLedgerSchema),orders:z.array(orderSchema)});
 const version2Backup=legacyBackupSchema.extend({schemaVersion:z.literal(2),...progressionBackup});
 const rewardBackup={prizes:z.array(prizeSchema),redemptions:z.array(redemptionSchema),rewardImages:z.array(rewardImageSchema)};
+const version3Backup=version2Backup.extend({schemaVersion:z.literal(3),ledger:z.array(ledgerSchema),...rewardBackup});
 export const backupSchema=z.union([
- version2Backup.extend({schemaVersion:z.literal(3),ledger:z.array(ledgerSchema),...rewardBackup}),
- version2Backup.transform(b=>({...b,schemaVersion:3 as const,prizes:[],redemptions:[],rewardImages:[]})),
- legacyBackupSchema.transform(b=>({...b,schemaVersion:3 as const,goals:[],plans:[],awards:[],journeys:[],bindings:[],settlements:[],prizes:[],redemptions:[],rewardImages:[]}))
+ version3Backup.extend({schemaVersion:z.literal(4)}),
+ version3Backup.transform(b=>({...b,schemaVersion:4 as const})),
+ version2Backup.transform(b=>({...b,schemaVersion:4 as const,prizes:[],redemptions:[],rewardImages:[]})),
+ legacyBackupSchema.transform(b=>({...b,schemaVersion:4 as const,goals:[],plans:[],awards:[],journeys:[],bindings:[],settlements:[],prizes:[],redemptions:[],rewardImages:[]}))
 ]).transform(b=>({...b,ledger:b.ledger.map(l=>ledgerSchema.parse(l))}));
 export type Backup=z.infer<typeof backupSchema>;
 export function validateBackup(raw:unknown){
@@ -88,6 +92,9 @@ export function validateBackup(raw:unknown){
  if(b.prizes.some(p=>p.imageId&&!imageIds.has(p.imageId))||b.redemptions.some(o=>!prizeIds.has(o.prizeId)||(o.imageIdSnapshot&&!imageIds.has(o.imageIdSnapshot))))throw Error('礼品或订单图片引用缺失');
  for(const l of b.ledger){if(l.taskId){if(l.redemptionId||l.key!=='task-complete:'+l.taskId)throw Error('奖励流水来源无效');}else if(!l.redemptionId||!orderIds.has(l.redemptionId)||!['redeem:'+l.redemptionId,'refund:'+l.redemptionId].includes(l.key))throw Error('奖励流水来源无效');}
  for(const o of b.redemptions){
+  if(o.status==='requested'&&(o.approvedAt!==undefined||o.fulfillmentNote!==undefined))throw Error('未确认申请不能包含兑现约定');
+  if(o.approvedAt!==undefined&&(o.approvedAt<o.redeemedAt||!o.fulfillmentNote?.trim()||o.status==='claimed'&&o.claimedAt!<o.approvedAt||o.status==='cancelled'&&o.cancelledAt!<o.approvedAt))throw Error('家长确认记录不一致');
+  if(o.fulfillmentNote!==undefined&&o.approvedAt===undefined)throw Error('兑现约定缺少确认时间');
   const debit=b.ledger.filter(l=>l.key==='redeem:'+o.id),refund=b.ledger.filter(l=>l.key==='refund:'+o.id);
   if(debit.length!==1||debit[0].delta!==-o.costSnapshot||debit[0].at!==o.redeemedAt)throw Error('兑换扣星流水不一致');
   if(o.status==='cancelled'?(refund.length!==1||refund[0].delta!==o.costSnapshot||refund[0].at!==o.cancelledAt||o.cancelledAt===undefined||o.cancelledAt<o.redeemedAt||o.claimedAt!==undefined):refund.length>0||o.cancelledAt!==undefined)throw Error('兑换退款状态不一致');
@@ -96,18 +103,20 @@ export function validateBackup(raw:unknown){
  if(b.ledger.reduce((n,l)=>n+l.delta,0)<0)throw Error('备份的星星余额不能为负');
  return b;
 }
-export async function exportBackup(){return db.transaction('r',db.tables,async()=>({schemaVersion:3 as const,appVersion:'0.3.0',exportedAt:Date.now(),profiles:await db.profiles.toArray(),tasks:await db.tasks.toArray(),sessions:await db.sessions.toArray(),segments:await db.segments.toArray(),ledger:await db.ledger.toArray(),orders:await db.orders.toArray(),goals:await db.goals.toArray(),plans:await db.plans.toArray(),awards:await db.awards.toArray(),journeys:await db.journeys.toArray(),bindings:await db.bindings.toArray(),settlements:await db.settlements.toArray(),prizes:await db.prizes.toArray(),redemptions:await db.redemptions.toArray(),rewardImages:await db.rewardImages.toArray()}));}
+export async function exportBackup(){if(await db.profiles.count())requireParent();return db.transaction('r',db.tables,async()=>({schemaVersion:4 as const,appVersion:'0.4.0',exportedAt:Date.now(),profiles:await db.profiles.toArray(),tasks:await db.tasks.toArray(),sessions:await db.sessions.toArray(),segments:await db.segments.toArray(),ledger:await db.ledger.toArray(),orders:await db.orders.toArray(),goals:await db.goals.toArray(),plans:await db.plans.toArray(),awards:await db.awards.toArray(),journeys:await db.journeys.toArray(),bindings:await db.bindings.toArray(),settlements:await db.settlements.toArray(),prizes:await db.prizes.toArray(),redemptions:await db.redemptions.toArray(),rewardImages:await db.rewardImages.toArray()}));}
 
 export async function beginMaintenance(reason:string){const token=uid();await db.transaction('rw',db.runtimeControl,db.sessions,async()=>{const control=await db.runtimeControl.get('main')??{id:'main' as const,schemaVersion:DATA_VERSION,epoch:db.runtimeState.epoch};if(control.epoch!==db.runtimeState.epoch)throw Error('档案已更新，请先刷新');if(control.maintenance&&control.maintenance.until>Date.now())throw Error('另一个页面正在维护记录，请稍后');if(await db.sessions.where('status').equals('running').count())throw Error('请先在所有页面暂停专注');await db.runtimeControl.put({...control,maintenance:{token,reason,until:Date.now()+30000}});});return token;}
 export async function endMaintenance(token:string){await db.transaction('rw',db.runtimeControl,async()=>{const current=await db.runtimeControl.get('main');if(current?.maintenance?.token===token)await db.runtimeControl.put({...current,maintenance:undefined});});}
 export async function restoreBackup(raw:unknown){
+ if(await db.profiles.count())requireParent();
  const b=validateBackup(raw);
  if(typeof createImageBitmap==='function'){for(const image of b.rewardImages){const bytes=Uint8Array.from(atob(image.base64),c=>c.charCodeAt(0));let decoded:ImageBitmap;try{decoded=await createImageBitmap(new Blob([bytes],{type:image.mimeType}));}catch{throw Error('备份中的礼品图片无法解码');}const tooLarge=Math.max(decoded.width,decoded.height)>800;decoded.close();if(tooLarge)throw Error('备份中的礼品图片尺寸超过800像素');}}
  const token=await beginMaintenance('恢复备份');
  try{const epoch=await db.transaction('rw',db.tables,async()=>{
+  if(await db.profiles.count())requireParent();
   const control=await db.runtimeControl.get('main');if(control?.maintenance?.token!==token||control.maintenance.until<Date.now())throw Error('维护状态已变化，请重试');db.allowMaintenanceTransaction();
   for(const table of db.tables)if(table.name!=='runtimeControl')await table.clear();
   await db.profiles.bulkAdd(b.profiles);await db.tasks.bulkAdd(b.tasks);await db.sessions.bulkAdd(b.sessions.map(s=>({...s,status:s.status==='running'?'paused':s.status,owner:'',generation:s.generation+1,reason:'从备份恢复，请手动继续'})));await db.segments.bulkAdd(b.segments);await db.ledger.bulkAdd(b.ledger);await db.orders.bulkAdd(b.orders);await db.goals.bulkAdd(b.goals);await db.plans.bulkAdd(b.plans);await db.awards.bulkAdd(b.awards);await db.journeys.bulkAdd(b.journeys);await db.bindings.bulkAdd(b.bindings);await db.settlements.bulkAdd(b.settlements);await db.prizes.bulkAdd(b.prizes);await db.redemptions.bulkAdd(b.redemptions);await db.rewardImages.bulkAdd(b.rewardImages);
   await db.runtimeControl.put({...control,epoch:control.epoch+1,maintenance:undefined});return control.epoch+1;
- });db.runtimeState.epoch=epoch;}finally{await endMaintenance(token);}
+ });db.runtimeState.epoch=epoch;lockParent();}finally{await endMaintenance(token);}
 }

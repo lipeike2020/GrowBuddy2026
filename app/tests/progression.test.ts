@@ -1,4 +1,5 @@
 import 'fake-indexeddb/auto';
+import { unlockParentSession } from '../src/parent-session';
 import { beforeEach,afterEach,describe,it,expect,vi } from 'vitest';
 import { db,ForestDB,saveTask,completeTask,moveToday,exportBackup,restoreBackup,validateBackup,day,uid,type Task } from '../src/data';
 import { saveGoal,savePlan,generateTasks,setPlanPaused,setGoalPaused,setTaskPaused,completePlan,completeGoal,selectCompanion,settleDays,useTemplate,addDays,templates } from '../src/progression';
@@ -7,7 +8,7 @@ import Dexie from 'dexie';
 const goal=(id='g'):Goal=>({id,name:'读懂故事',category:'学习',criteria:'分享故事情节',description:'',assetId:'A11',status:'active',version:1,createdAt:Date.now()});
 const plan=(id='p',goalId='g'):Plan=>({id,goalId,name:'每日阅读',taskName:'阅读一段',category:'学习',criteria:'说说喜欢的情节',frequency:'daily',weekdays:[],startDate:day(),endDate:addDays(day(),10),minutes:15,stars:3,assetId:'M11',status:'active',version:1,createdAt:Date.now()});
 const task=(id:string):Task=>({id,name:'小事',category:'习惯',criteria:'完成小事',date:day(),stars:0,minutes:5,status:'todo',createdAt:Date.now()});
-beforeEach(async()=>{for(const t of db.tables)await t.clear();});
+beforeEach(async()=>{unlockParentSession();for(const t of db.tables)await t.clear();});
 afterEach(()=>vi.restoreAllMocks());
 async function seed(){await saveGoal(goal());await savePlan(plan());}
 describe('计划生成与更新',()=>{

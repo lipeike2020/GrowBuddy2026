@@ -1,0 +1,12 @@
+.bottom-nav{grid-template-columns:repeat(auto-fit,minmax(0,1fr))}
+.topbar>.actions{gap:6px;justify-content:flex-end;flex-wrap:wrap}
+.topbar>.actions button{min-height:44px}
+@media(max-width:760px){
+ .topbar{flex-wrap:wrap;gap:8px;padding:10px 0}
+ .topbar>.actions{margin-left:auto}
+ .topbar>.actions button{padding:8px 10px;font-size:14px}
+ .bottom-nav a{min-width:0;font-size:14px}
+ .parent-dashboard .date-controls{display:grid;grid-template-columns:36px minmax(0,1fr) 36px;gap:5px;width:100%}
+ .parent-dashboard .date-controls button{width:36px;height:44px;min-height:44px;padding:0}
+ .parent-dashboard .date-controls span{text-align:center;font-size:13px;white-space:nowrap}
+}

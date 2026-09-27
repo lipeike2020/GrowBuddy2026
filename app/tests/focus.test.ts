@@ -1,4 +1,6 @@
 import 'fake-indexeddb/auto';
+import { unlockParentSession } from '../src/parent-session';
+unlockParentSession();
 import { describe,it,expect,vi } from 'vitest';
 import { elapsedDelta,splitInterval,startFocus,pauseFocus,resumeFocus,finishFocus,focus } from '../src/focus';
 import { db,saveTask,day } from '../src/data';
