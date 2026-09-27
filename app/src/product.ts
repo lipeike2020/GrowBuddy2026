@@ -6,6 +6,7 @@ import './responsive.css';
 import './progression.css';
 import './forest-theme.css';
 import './parent.css';
+import './reward-icons.css';
 import { isProductHash } from './entry';
 document.title = '成长森林 · 每天进步一点点';
 window.addEventListener('hashchange', () => {
