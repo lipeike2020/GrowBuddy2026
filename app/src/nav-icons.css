@@ -1,8 +1,11 @@
-.bottom-nav.child-nav{background:linear-gradient(135deg,#fffdf8f5,#fffaf9f5);border-color:#ebdfd9;box-shadow:0 8px 28px #715c4a1b}
-.bottom-nav.child-nav a{transition:background .18s,color .18s,transform .18s}
-.bottom-nav.child-nav a.active{box-shadow:inset 0 1px 0 #fff9}
-.bottom-nav.child-nav a[href="#/today"].active{background:#f8e9e7;color:#765e5b}
-.bottom-nav.child-nav a[href="#/plans"].active{background:#efe9f2;color:#715c7d}
-.bottom-nav.child-nav a[href="#/growth"].active{background:#e9f1e5;color:#496b4f}
-.bottom-nav.child-nav img{width:31px;height:31px;filter:drop-shadow(0 2px 2px #715c4a16)}
-@media(max-width:760px){.bottom-nav.child-nav a{gap:3px;min-height:63px}.bottom-nav.child-nav img{width:29px;height:29px}}
+.bottom-nav.child-nav{background:#fffdf9f7;border-color:#ecdfd4;box-shadow:0 8px 28px #715c4a1b}
+.bottom-nav.child-nav a{gap:3px;transition:background .18s,color .18s,transform .18s;color:#677164}
+.bottom-nav.child-nav a:not(.active) img{opacity:.82;filter:saturate(.72);transform:scale(.96)}
+.bottom-nav.child-nav a.active{box-shadow:inset 0 1px 0 #fff9;font-weight:750}
+.bottom-nav.child-nav a.active img{opacity:1;filter:drop-shadow(0 3px 3px #715c4a27);transform:translateY(-1px) scale(1.03)}
+.bottom-nav.child-nav a[href="#/today"].active{background:#f9ece6;color:#654b43}
+.bottom-nav.child-nav a[href="#/plans"].active{background:#f0eaf6;color:#66536e}
+.bottom-nav.child-nav a[href="#/growth"].active{background:#edf3e7;color:#425e48}
+.bottom-nav.child-nav img{width:43px;height:43px;object-fit:contain;transition:filter .18s,opacity .18s,transform .18s}
+@media(max-width:760px){.bottom-nav.child-nav a{gap:0;min-height:70px;font-size:13px}.bottom-nav.child-nav img{width:40px;height:40px}}
+@media(prefers-reduced-motion:reduce){.bottom-nav.child-nav a,.bottom-nav.child-nav img{transition:none}}
