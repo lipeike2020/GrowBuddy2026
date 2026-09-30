@@ -1,0 +1,5 @@
+.growth-heading.page-heading{min-height:184px;background:#f9f9ef url('/assets/headers/growth-watercolor.webp') center center/cover no-repeat;border-color:#e1e9d7;overflow:hidden;box-shadow:0 6px 20px #5c74460b}
+.plans-heading.page-heading{min-height:184px;background:#fbfaef url('/assets/headers/plans-watercolor.webp') center center/cover no-repeat;border-color:#dde8d3;box-shadow:0 6px 20px #5c74460b}
+.growth-heading.page-heading>div,.plans-heading.page-heading>div,.plans-heading.page-heading>.plans-mascot{position:relative}
+.plans-heading.page-heading>.plans-mascot{filter:drop-shadow(0 4px 5px #4e6a351c)}
+@media(max-width:430px){.growth-heading.page-heading,.plans-heading.page-heading{background-position:center center}.growth-heading.page-heading{min-height:172px}.plans-heading.page-heading{display:grid;grid-template-columns:minmax(0,1fr) 75px;gap:8px;min-height:180px}.plans-heading.page-heading .eyebrow{font-size:12px;letter-spacing:0;white-space:nowrap}.plans-heading.page-heading>.plans-mascot{justify-self:end;align-self:end}}
