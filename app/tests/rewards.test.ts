@@ -3,6 +3,15 @@ import { unlockParentSession } from '../src/parent-session';
 import { beforeEach,it,expect } from 'vitest';
 import { db,saveTask,completeTask,day,exportBackup,restoreBackup,validateBackup,beginMaintenance,endMaintenance } from '../src/data';
 import { savePrize,redeemPrize,cancelRedemption,claimRedemption,approveRedemption } from '../src/rewards';
+it('图标随兑换快照和备份保留，修改礼品不影响旧图标',async()=>{
+ await savePrize({...prize,iconId:'picnic'},1);
+ const order=await redeemPrize('p',2,'icon-order');
+ await savePrize({...prize,iconId:'book'},2);
+ expect((await db.redemptions.get(order.id))?.iconIdSnapshot).toBe('picnic');
+ const backup=await exportBackup();await restoreBackup(backup);
+ expect((await db.prizes.get('p'))?.iconId).toBe('book');
+ expect((await db.redemptions.get(order.id))?.iconIdSnapshot).toBe('picnic');
+});
 const prize={id:'p',name:'公园野餐',description:'周末一起出发',costStars:3,enabled:true,version:0,createdAt:Date.now(),updatedAt:Date.now()};
 beforeEach(async()=>{unlockParentSession();for(const table of db.tables)await table.clear();await saveTask({id:'t',name:'阅读',category:'学习',criteria:'读完',date:day(),minutes:5,stars:5,status:'todo',createdAt:Date.now()});await completeTask('t','done');await savePrize(prize,0);});
 it('同一请求并发兑换仅扣一次星星',async()=>{const [a,b]=await Promise.all([redeemPrize('p',1,'r'),redeemPrize('p',1,'r')]);expect(a.id).toBe(b.id);expect(await db.redemptions.count()).toBe(1);expect((await db.ledger.toArray()).reduce((n,l)=>n+l.delta,0)).toBe(2);});

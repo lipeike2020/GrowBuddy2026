@@ -6,7 +6,7 @@ export class PrizeChangedError extends Error {constructor(){super('礼品已经�
 export async function savePrize(input:Prize,expectedVersion:number,image?:RewardImage){
  requireParent();
  const prize=prizeSchema.parse({...input,version:expectedVersion+1,updatedAt:Date.now()});
- if(image){validateImage(image);prize.imageId=image.id;}
+ if(image){validateImage(image);prize.imageId=image.id;prize.iconId=undefined;}
  await db.transaction('rw',db.prizes,db.rewardImages,async()=>{
   requireParent();
   const old=await db.prizes.get(prize.id);if((old?.version??0)!==expectedVersion)throw new PrizeChangedError();
@@ -23,7 +23,7 @@ export async function redeemPrize(prizeId:string,expectedVersion:number,requestI
   const prize=await db.prizes.get(prizeId);if(!prize||!prize.enabled)throw Error('这个礼品已停用，请选择其他礼品');
   if(prize.version!==expectedVersion)throw new PrizeChangedError();
   const balance=(await db.ledger.toArray()).reduce((n,l)=>n+l.delta,0);if(balance<prize.costStars)throw Error(`还差 ${prize.costStars-balance} 颗星星，慢慢积累就好`);
-  const at=Date.now(),order:Redemption={id:uid(),requestId,prizeId,prizeVersion:prize.version,nameSnapshot:prize.name,descriptionSnapshot:prize.description,imageIdSnapshot:prize.imageId,costSnapshot:prize.costStars,status:'requested',redeemedAt:at};
+  const at=Date.now(),order:Redemption={id:uid(),requestId,prizeId,prizeVersion:prize.version,nameSnapshot:prize.name,descriptionSnapshot:prize.description,imageIdSnapshot:prize.imageId,iconIdSnapshot:prize.iconId,costSnapshot:prize.costStars,status:'requested',redeemedAt:at};
   await db.redemptions.add(order);await db.ledger.add({key:'redeem:'+order.id,redemptionId:order.id,delta:-order.costSnapshot,at});return order;
  });
 }
